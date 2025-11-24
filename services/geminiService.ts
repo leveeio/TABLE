@@ -1,14 +1,11 @@
 import { GoogleGenAI } from "@google/genai";
 
 const getClient = () => {
-  // Safely attempt to retrieve API key without throwing if process is undefined
-  const apiKey = (typeof process !== 'undefined' && process.env && process.env.API_KEY) 
-    ? process.env.API_KEY 
-    : '';
-  
-  // We do NOT check if apiKey is empty here, allowing the request to proceed 
-  // in case the environment handles auth differently or the user ignores the check.
-  return new GoogleGenAI({ apiKey });
+  // Access process.env.API_KEY directly. 
+  // In many bundlers (like Vite), 'process' is not defined, but 'process.env.API_KEY' 
+  // is replaced by the actual key string at build time.
+  // Using 'process.env.API_KEY' ensures the key is correctly retrieved.
+  return new GoogleGenAI({ apiKey: process.env.API_KEY });
 };
 
 export const transformTextToNoble = async (
