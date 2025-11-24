@@ -1,9 +1,15 @@
 import { GoogleGenAI } from "@google/genai";
 
 const getClient = () => {
-  const apiKey = process.env.API_KEY;
+  let apiKey = '';
+  try {
+    apiKey = process.env.API_KEY || '';
+  } catch (e) {
+    console.error("Environment variable access failed", e);
+  }
+
   if (!apiKey) {
-    throw new Error("API Key not found in environment variables");
+    throw new Error("API Key not found. Ensure process.env.API_KEY is set.");
   }
   return new GoogleGenAI({ apiKey });
 };
@@ -113,14 +119,14 @@ export const transformTextToNoble = async (
 
     const response = await ai.models.generateContent({
       model: modelId,
-      contents: inputText,
+      contents: [{ role: 'user', parts: [{ text: inputText }] }],
       config: {
         systemInstruction: systemInstruction,
         temperature: 0.85, 
       }
     });
 
-    return response.text || "Alas, the spirits of the ether remain silent. Pray, try again.";
+    return response.text || "Alas, the spirits of the ether remain silent.";
   } catch (error) {
     console.error("Gemini transformation error:", error);
     throw error;
@@ -141,13 +147,13 @@ export const translateText = async (text: string, targetLanguage: string): Promi
         
         const response = await ai.models.generateContent({
             model: modelId,
-            contents: text,
+            contents: [{ role: 'user', parts: [{ text: text }] }],
             config: { systemInstruction }
         });
 
         return response.text || text;
     } catch (error) {
         console.error("Translation error:", error);
-        return text;
+        throw error;
     }
 }

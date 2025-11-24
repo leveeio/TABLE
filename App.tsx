@@ -201,6 +201,7 @@ const App: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [outputText, setOutputText] = useState('');
   const [status, setStatus] = useState<TransformationState>(TransformationState.IDLE);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isChroniclesOpen, setIsChroniclesOpen] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [savedParchments, setSavedParchments] = useState<HistoryEntry[]>([]);
@@ -344,6 +345,8 @@ const App: React.FC = () => {
     setStatus(TransformationState.THINKING);
     setJustSaved(false);
     setShowTranslateMenu(false); // Close menu if open
+    setErrorMessage(null);
+
     try {
       const result = await transformTextToNoble(inputText, useArchaic, targetLanguage, selectedEra, selectedWriter);
       setOutputText(result);
@@ -360,8 +363,9 @@ const App: React.FC = () => {
       
       setHistory(prev => [newEntry, ...prev]);
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("Transformation Error:", error);
+      setErrorMessage(error.message || "An unknown error occurred");
       setStatus(TransformationState.ERROR);
     }
   };
@@ -373,8 +377,9 @@ const App: React.FC = () => {
     try {
       const translated = await translateText(outputText, lang);
       setOutputText(translated);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      // Optional: show translation error toast? For now just log
     } finally {
       setIsTranslatingOutput(false);
     }
@@ -405,6 +410,7 @@ const App: React.FC = () => {
     setStatus(TransformationState.IDLE);
     setJustSaved(false);
     setShowTranslateMenu(false);
+    setErrorMessage(null);
   };
 
   const handleRestoreEntry = (entry: HistoryEntry) => {
@@ -768,9 +774,15 @@ const App: React.FC = () => {
                                 <AlertCircle className="w-6 h-6 text-red-800/60" />
                             </div>
                             <h3 className="font-cinzel text-lg text-red-900/60 mb-2">The Spirits are Restless</h3>
-                            <p className="font-playfair italic text-stone-600 text-sm">
-                                Something went awry in the ether. Pray, check your connection or API key and try again.
+                            <p className="font-playfair italic text-stone-600 text-sm max-w-xs mx-auto">
+                                {errorMessage || "Something went awry in the ether. Pray, check your connection or API key and try again."}
                             </p>
+                            <button 
+                                onClick={handleTransform}
+                                className="mt-6 px-6 py-2 border border-stone-700 text-stone-600 font-cinzel text-xs uppercase tracking-widest hover:border-noble-gold hover:text-noble-gold transition-colors"
+                            >
+                                Try Again
+                            </button>
                         </motion.div>
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center text-stone-800 italic font-playfair text-lg select-none">
