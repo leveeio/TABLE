@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vox Nobilis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'noble-dark': '#0a0c0b',
+              'noble-green': '#1a2118',
+              'noble-gold': '#8a7e56',
+              'noble-paper': '#e3dccf',
+              'noble-text': '#d4d4d4',
+              'ink': '#2b1d0e',
+            },
+            fontFamily: {
+              cinzel: ['"Cinzel"', 'serif'],
+              cormorant: ['"Cormorant Garamond"', 'serif'],
+              playfair: ['"Playfair Display"', 'serif'],
+              handwriting: ['"Pinyon Script"', 'cursive'],
+            },
+            animation: {
+              'drift': 'drift 20s infinite linear',
+              'spin-slow': 'spin 4s linear infinite',
+            },
+            keyframes: {
+              drift: {
+                '0%': { transform: 'translate(0, 0)' },
+                '100%': { transform: 'translate(-5%, -5%)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #050605;
+        color: #d4d4d4;
+        overflow-x: hidden;
+      }
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0a0c0b;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #333;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #8a7e56;
+      }
+      .glass-panel {
+        background: rgba(10, 12, 11, 0.7);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(138, 126, 86, 0.2);
+      }
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      /* Realistic Ink Filter - HD (No Blur) */
+      .ink-text {
+        color: rgba(20, 15, 10, 0.95);
+        mix-blend-mode: multiply;
+        filter: url(#ink-roughness);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    
+    <!-- SVG Filters for Ink Simulation -->
+    <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="ink-roughness">
+          <!-- Reduced baseFrequency for subtler, sharper roughness -->
+          <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="3" result="noise" />
+          <!-- Very slight displacement to create the "handwritten/bleed" edge without blurring -->
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.3" xChannelSelector="R" yChannelSelector="G" />
+          <!-- Removed GaussianBlur to ensure HD sharpness -->
+        </filter>
+        
+        <filter id="paper-texture">
+          <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5" result="noise" />
+          <feDiffuseLighting in="noise" lighting-color="#e3dccf" surfaceScale="2">
+            <feDistantLight azimuth="45" elevation="60" />
+          </feDiffuseLighting>
+        </filter>
+      </defs>
+    </svg>
+  </body>
+</html>
