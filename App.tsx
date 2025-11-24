@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Feather, MoveRight, RotateCcw, Copy, Sparkles, Loader2, BookOpen, Globe, Bookmark, Check, Hourglass, PenTool, Languages, Music, X, ChevronRight } from 'lucide-react'; 
+import { Feather, MoveRight, RotateCcw, Copy, Sparkles, Loader2, BookOpen, Globe, Bookmark, Check, Hourglass, PenTool, Languages, Music, X, ChevronRight, AlertCircle } from 'lucide-react'; 
 import Background from './components/Background';
 import OrnateButton from './components/OrnateButton';
 import Chronicles from './components/Chronicles';
@@ -361,6 +361,7 @@ const App: React.FC = () => {
       setHistory(prev => [newEntry, ...prev]);
       
     } catch (error) {
+      console.error("Transformation Error:", error);
       setStatus(TransformationState.ERROR);
     }
   };
@@ -698,7 +699,10 @@ const App: React.FC = () => {
               <textarea
                 ref={inputRef}
                 value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
+                onChange={(e) => {
+                    setInputText(e.target.value);
+                    if (status === TransformationState.ERROR) setStatus(TransformationState.IDLE);
+                }}
                 placeholder="Type your modern message here..."
                 className="flex-grow w-full bg-transparent border-none resize-none outline-none text-xl font-playfair text-stone-300 placeholder-stone-800 leading-relaxed"
                 spellCheck={false}
@@ -753,9 +757,24 @@ const App: React.FC = () => {
                         >
                           "{outputText}"
                         </motion.div>
+                      ) : status === TransformationState.ERROR ? (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 flex flex-col items-center justify-center text-center p-8"
+                        >
+                            <div className="w-12 h-12 rounded-full bg-red-900/20 flex items-center justify-center mb-4 border border-red-900/30">
+                                <AlertCircle className="w-6 h-6 text-red-800/60" />
+                            </div>
+                            <h3 className="font-cinzel text-lg text-red-900/60 mb-2">The Spirits are Restless</h3>
+                            <p className="font-playfair italic text-stone-600 text-sm">
+                                Something went awry in the ether. Pray, check your connection or API key and try again.
+                            </p>
+                        </motion.div>
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center text-stone-800 italic font-playfair text-lg select-none">
-                            The parchment awaits ink...
+                            {status === TransformationState.THINKING ? "The scribe is thinking..." : "The parchment awaits ink..."}
                         </div>
                       )}
                   </AnimatePresence>
