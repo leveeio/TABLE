@@ -11,7 +11,7 @@ interface OrnateButtonProps {
 const OrnateButton: React.FC<OrnateButtonProps> = ({ onClick, disabled, children, className = '' }) => {
   return (
     <motion.button
-      whileHover={!disabled ? { scale: 1.02, letterSpacing: '0.1em' } : {}}
+      whileHover={!disabled ? { scale: 1.02 } : {}}
       whileTap={!disabled ? { scale: 0.98 } : {}}
       onClick={onClick}
       disabled={disabled}
