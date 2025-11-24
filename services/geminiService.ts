@@ -1,16 +1,13 @@
 import { GoogleGenAI } from "@google/genai";
 
 const getClient = () => {
-  let apiKey = '';
-  try {
-    apiKey = process.env.API_KEY || '';
-  } catch (e) {
-    console.error("Environment variable access failed", e);
-  }
-
-  if (!apiKey) {
-    throw new Error("API Key not found. Ensure process.env.API_KEY is set.");
-  }
+  // Safely attempt to retrieve API key without throwing if process is undefined
+  const apiKey = (typeof process !== 'undefined' && process.env && process.env.API_KEY) 
+    ? process.env.API_KEY 
+    : '';
+  
+  // We do NOT check if apiKey is empty here, allowing the request to proceed 
+  // in case the environment handles auth differently or the user ignores the check.
   return new GoogleGenAI({ apiKey });
 };
 

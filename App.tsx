@@ -46,7 +46,7 @@ const WRITER_DATA: Record<string, { masterpiece: string; style: string }> = {
   "Fitzgerald": { masterpiece: "The Great Gatsby", style: "Lyrical, poetic prose, jazz age romanticism." },
   "Steinbeck": { masterpiece: "The Grapes of Wrath", style: "Realistic, sympathetic, descriptive, rugged." },
   "Christie": { masterpiece: "Murder on the Orient Express", style: "Plot-driven, dialogue-heavy, mystery structure." },
-  "Asimov": { masterpiece: "Foundation", style: "Rational, scientific, unadorned, idea-focused." },
+  "Asimov": { masterpiece: "Foundation", style: "Rational, scientific, unadorned, focused on ideas and sociology over stylistic flourish." },
 };
 
 const WRITERS = Object.keys(WRITER_DATA);
@@ -365,7 +365,9 @@ const App: React.FC = () => {
       
     } catch (error: any) {
       console.error("Transformation Error:", error);
-      setErrorMessage(error.message || "An unknown error occurred");
+      // Ensure we always capture a message string, even if error.message is elusive
+      const msg = error?.message || (typeof error === 'string' ? error : "An unexpected spiritual disturbance occurred.");
+      setErrorMessage(msg);
       setStatus(TransformationState.ERROR);
     }
   };
@@ -775,7 +777,7 @@ const App: React.FC = () => {
                             </div>
                             <h3 className="font-cinzel text-lg text-red-900/60 mb-2">The Spirits are Restless</h3>
                             <p className="font-playfair italic text-stone-600 text-sm max-w-xs mx-auto">
-                                {errorMessage || "Something went awry in the ether. Pray, check your connection or API key and try again."}
+                                {errorMessage}
                             </p>
                             <button 
                                 onClick={handleTransform}
